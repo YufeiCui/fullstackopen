@@ -1,18 +1,48 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-const Hello = (props) => (
-  <p>Hello World, {props.name} who was borned on {props.age.toString()}</p>
-)
+const App = () => {
+    const [left, setLeft] = useState(0)
+    const [right, setright] = useState(0)
+    const [allClicks, setAll] = useState([])
 
-const App = () =>{
-  const now = new Date()
-  const age = new Date(1997, 7-1, 7)
+    const handleLeft = () => {
+        setLeft(left + 1)
+        setAll(allClicks.concat('L'))
+    }
 
-  return (
-    <div>
-      <p><Hello name="Yufei" age={age}/> it is now {now.toString()}</p>
-    </div>
-  )
+    const handleRight = () => {
+        setright(right + 1)
+        setAll(allClicks.concat('R'))
+    }
+
+    return (
+        <div>
+            {left}
+            <Button handler={handleLeft} text="left"/>
+            <Button handler={handleRight} text="right"/>
+            {right}
+            <History allClicks={allClicks}/>
+        </div>
+    )
+}
+
+const Button = ({ handler, text }) => {
+    return (
+        <button onClick={handler}>
+            {text}
+        </button>
+    )
+}
+
+const History = ( {allClicks }) => {
+    let content;
+    if (allClicks.length === 0) {
+        content = "the app is used by pressing the buttons"
+    } else {
+        content = `button press history: ${allClicks.join(' ')}`
+    }
+
+    return (<div>{content}</div>)
 }
 
 export default App;
