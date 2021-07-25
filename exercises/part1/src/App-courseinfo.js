@@ -1,62 +1,60 @@
 import React from 'react'
+import Course from './components/Course'
 
-const Header = (props) => {
-  return (
-    <div>{props.course}</div>
-  )
-}
-
-const Part = (props) => {
-  return (
-    <p>{props.part} {props.exercise}</p>
-  )
-}
-
-const Content = (props) => {
-  return (
-    props.content.map((part) => {
-      return <Part part={part.name} exercise={part.exercises}/>
-    })
-  )
-}
-
-const Total = (props) => {
-  return (
-    <p>Number of exercises: {props.total}</p>
-  )
-}
-
+import './App.css'
 
 const App = () => {
-  const course = {
-    name: 'Half Stack application development',
-    parts: [
-      {
-        name: 'Fundamentals of React',
-        exercises: 10
-      },
-      {
-        name: 'Using props to pass data',
-        exercises: 7
-      },
-      {
-        name: 'State of a component',
-        exercises: 14
-      }
-    ]
-  }
-
-
-  // returns the total number of exercises given a list of parts 
-  const getTotalExercises = content => {
-    return content.reduce((acc, curr) => acc + curr.exercises, 0)
-  }
+  const courses = [
+    {
+      name: 'Half Stack application development',
+      id: 1,
+      parts: [
+        {
+          name: 'Fundamentals of React',
+          exercises: 10,
+          id: 1
+        },
+        {
+          name: 'Using props to pass data',
+          exercises: 7,
+          id: 2
+        },
+        {
+          name: 'State of a component',
+          exercises: 14,
+          id: 3
+        },
+        {
+          name: 'Redux',
+          exercises: 11,
+          id: 4
+        }
+      ]
+    },
+    {
+      name: 'Node.js',
+      id: 2,
+      parts: [
+        {
+          name: 'Routing',
+          exercises: 3,
+          id: 1
+        },
+        {
+          name: 'Middlewares',
+          exercises: 7,
+          id: 2
+        }
+      ]
+    }
+  ]
 
   return (
     <div>
-      <Header course={course.name}/>
-      <Content content={course.parts}/>
-      <Total total={getTotalExercises(course.parts)}/>
+      <h1>Web development curriculum</h1>
+      {courses.map(course => {
+        return <Course key={course.id} course={course}/>
+      })}
     </div>
   )
 }
