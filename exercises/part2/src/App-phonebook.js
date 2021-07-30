@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Phonebook from './components/Phonebook'
-import axios from 'axios'
+import phonebookServices from './services/phonebook'
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -11,10 +11,13 @@ const App = () => {
   ])
 
   const hook = () => {
-    axios.get('http://localhost:3001/persons')
-    .then(response => {
-      setPersons(response.data)
-    })
+    phonebookServices.getAll()
+      .then(persons => {
+        setPersons(persons)
+      })
+      .catch(error => {
+        console.log(error)
+      })
   }
 
   useEffect(hook, []) // again, the [] means call only first render
@@ -22,14 +25,38 @@ const App = () => {
   const addPhoneNumber = (newPerson) => {
     const duplicates = persons.find(person => person.name === newPerson.name)
     if (duplicates !== undefined) {
-      alert(`${newPerson.name} is already added to phonebook`)
+      if (window.confirm(`${newPerson.name} is aleady added to the phonebook, replace the old number with a new one?`)) {
+        phonebookServices.updatePhoneNumber(duplicates.id, newPerson).then(updatedPerson => {
+          setPersons(persons.map(person => person.id === duplicates.id ? updatedPerson : person))
+        }).catch(error => {
+          console.log(error)
+        })
+      }
     } else {
-      setPersons(persons.concat(newPerson))
+      phonebookServices.addPhoneNumber(newPerson).then(addedPerson => {
+        setPersons(persons.concat(addedPerson))
+      }).catch(error => {
+        console.log(error)
+      })
+    }
+  }
+
+  const deletePhoneNumberOf = (seletedPerson) => {
+    if (window.confirm(`Delete ${seletedPerson.name} ?`)) {
+      phonebookServices.deletePhoneNumber(seletedPerson.id).then(_ => {
+        setPersons(persons.filter(person => person.id !== seletedPerson.id))
+      }).catch(error => {
+        console.log(error)
+      })
     }
   }
 
   return (
-    <Phonebook persons={persons} addPhoneNumber={addPhoneNumber}></Phonebook>
+    <Phonebook
+      persons={persons}
+      addPhoneNumber={addPhoneNumber}
+      deletePhoneNumberOf={deletePhoneNumberOf}
+    />
   )
 }
 

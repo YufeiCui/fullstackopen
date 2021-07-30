@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const Phonebook = ({persons, addPhoneNumber}) => {
+const Phonebook = ({ persons, addPhoneNumber, deletePhoneNumberOf }) => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterString, setFilterString] = useState('')
@@ -17,6 +17,10 @@ const Phonebook = ({persons, addPhoneNumber}) => {
       number: newNumber
     })
     resetFields()
+  }
+
+  const handleDelete = (person) => {
+    deletePhoneNumberOf(person)
   }
 
   const handleChange = (handler) => {
@@ -42,7 +46,7 @@ const Phonebook = ({persons, addPhoneNumber}) => {
       <Subheading text="Add a new"/>
       <PersonForm name={newName} number={newNumber} onChange={handleChanges} onSubmit={handleSubmit}/>
       <Subheading text="Numbers"/>
-      <Persons persons={filteredPersons}/>
+      <Persons persons={filteredPersons} handleDelete={handleDelete}/>
     </div>
   )
 }
@@ -77,11 +81,16 @@ const PersonForm = ({ name, number, onChange, onSubmit }) => {
   )
 }
 
-const Persons = ({ persons }) => {
+const Persons = ({ persons, handleDelete }) => {
   return (
     <div>
       {persons.map(person => {
-        return <p key={person.name}>{person.name} {person.number}</p>
+        return (
+          <div key={person.name}>
+            {person.name} {person.number}
+            <button onClick={() => handleDelete(person)}>delete</button>
+          </div>
+        )
       })}
     </div>
   )
