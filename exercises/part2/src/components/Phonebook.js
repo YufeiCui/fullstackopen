@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
+import Notification from './Notification'
 
-const Phonebook = ({ persons, addPhoneNumber, deletePhoneNumberOf }) => {
+const Phonebook = ({ persons, addPhoneNumber, deletePhoneNumberOf, notification }) => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterString, setFilterString] = useState('')
@@ -41,12 +42,13 @@ const Phonebook = ({ persons, addPhoneNumber, deletePhoneNumberOf }) => {
 
   return (
     <div>
-      <Subheading text="Phonebook"/>
-      <Filter filterString={filterString} onChange={handleChange(setFilterString)}/>
-      <Subheading text="Add a new"/>
-      <PersonForm name={newName} number={newNumber} onChange={handleChanges} onSubmit={handleSubmit}/>
-      <Subheading text="Numbers"/>
-      <Persons persons={filteredPersons} handleDelete={handleDelete}/>
+      <Subheading text="Phonebook" />
+      <Notification notification={notification}/>
+      <Filter filterString={filterString} onChange={handleChange(setFilterString)} />
+      <Subheading text="Add a new" />
+      <PersonForm name={newName} number={newNumber} onChange={handleChanges} onSubmit={handleSubmit} />
+      <Subheading text="Numbers" />
+      <Persons persons={filteredPersons} handleDelete={handleDelete} />
     </div>
   )
 }
@@ -57,10 +59,10 @@ const Subheading = ({ text }) => {
   )
 }
 
-const Filter = ({filterString, onChange}) => {
+const Filter = ({ filterString, onChange }) => {
   return (
     <div>
-      Filter shown with <input value={filterString} onChange={onChange}/>
+      Filter shown with <input value={filterString} onChange={onChange} />
     </div>
   )
 }
@@ -69,10 +71,10 @@ const PersonForm = ({ name, number, onChange, onSubmit }) => {
   return (
     <form onSubmit={onSubmit}>
       <div>
-        name: <input value={name} onChange={onChange[0]}/>
+        name: <input value={name} onChange={onChange[0]} />
       </div>
       <div>
-        number: <input value={number} onChange={onChange[1]}/>
+        number: <input value={number} onChange={onChange[1]} />
       </div>
       <div>
         <button type="submit">add</button>
