@@ -1,8 +1,13 @@
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
 const app = express()
 
+// serving the static files in the folder 'build'
+app.use(express.static('build'))
+
 app.use(express.json())
+app.use(cors())
 
 morgan.token('post', function getId (req) {
   if (req.method == 'POST') {
@@ -112,7 +117,16 @@ app.post('/api/persons', (req, res) => {
   res.json(person)
 })
 
-const PORT = 3001
+
+const unknownEndpoint = (req, res) => {
+  res.status(404).send({
+    error: "unknown endpoint"
+  })
+}
+
+app.use(unknownEndpoint)
+
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`)
 })

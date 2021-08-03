@@ -103,3 +103,13 @@ public
 
 # TernJS port file
 .tern-port
+
+part3/.git
+part3/.gitignore
+part2/build
+part3/build
+
+exercises/part3/.git
+exercises/part3/.gitignore
+exercises/part2/build
+exercises/part3/build

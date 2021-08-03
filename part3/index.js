@@ -1,5 +1,12 @@
 const express = require('express')
+const cors = require('cors')
 const app = express()
+
+// serving the static files in the folder 'build'
+app.use(express.static('build'))
+
+// Cross-Origin Policy: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+app.use(cors())
 
 // Without the json-parser, the req.body property would be undefined.
 // The json-parser functions so that it takes the JSON data of a request,
@@ -92,7 +99,7 @@ const unknownEndpoint = (req, res) => {
 // if req didnt hit any of the endpoints then it will trigger "unknownEndpoint"
 app.use(unknownEndpoint)
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
