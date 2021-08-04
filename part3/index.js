@@ -1,6 +1,11 @@
+// setting up process.env variables
+require('dotenv').config()
+
 const express = require('express')
+const morgan = require('morgan')
 const cors = require('cors')
 const app = express()
+const Note = require('./models/note')
 
 // serving the static files in the folder 'build'
 app.use(express.static('build'))
@@ -14,55 +19,59 @@ app.use(cors())
 // [body property of the request object] before the route handler is called.
 app.use(express.json())
 
-let notes = [
-  {
-    id: 1,
-    content: "HTML is easy",
-    date: "2019-05-30T17:30:31.098Z",
-    important: true
-  },
-  {
-    id: 2,
-    content: "Browser can execute only Javascript",
-    date: "2019-05-30T18:39:34.091Z",
-    important: false
-  },
-  {
-    id: 3,
-    content: "GET and POST are the most important methods of HTTP protocol",
-    date: "2019-05-30T19:20:14.298Z",
-    important: true
-  }
-]
+app.use(morgan('tiny'))
+
+// let notes = [
+//   {
+//     id: 1,
+//     content: "HTML is easy",
+//     date: "2019-05-30T17:30:31.098Z",
+//     important: true
+//   },
+//   {
+//     id: 2,
+//     content: "Browser can execute only Javascript",
+//     date: "2019-05-30T18:39:34.091Z",
+//     important: false
+//   },
+//   {
+//     id: 3,
+//     content: "GET and POST are the most important methods of HTTP protocol",
+//     date: "2019-05-30T19:20:14.298Z",
+//     important: true
+//   }
+// ]
 
 app.get('/', (req, res) => {
   res.send('<h1>Hello World</h1>')
 })
 
-app.get('/api/notes', (req, res) => {
-  res.json(notes)
+app.get('/api/notes', (req, res, next) => {
+  Note.find({})
+    .then(notes => {
+      res.json(notes)
+    })
+    .catch(error => {
+      next(error)
+    })
 })
 
-app.get('/api/notes/:id', (req, res) => {
-  const id = Number(req.params.id)
-  const found = notes.find(note => note.id === id)
-  if (found != undefined) {
-    res.json(found)
-  } else {
-    res.status(404).send(`There is no note with the id ${req.params.id}`)
-  }
+app.get('/api/notes/:id', (req, res, next) => {
+  const id = req.params.id
+  Note.findById(id)
+    .then(note => {
+      if (!note) {
+        res.status(404).send(`There is no note with the id ${id}`)
+      } else {
+        res.json(note)
+      }
+    })
+    .catch(error => {
+      next(error)
+    })
 })
 
-const generateID = () => {
-  const maxID = notes.length > 0
-    // use ... notes.map() b/c Math.max takes numbers not list
-    ? Math.max(...notes.map(note => note.id))
-    : 0
-
-  return maxID + 1
-}
-
-app.post('/api/notes/', (req, res) => {
+app.post('/api/notes/', (req, res, next) => {
   const body = req.body
 
   if (!body.content) {
@@ -71,25 +80,59 @@ app.post('/api/notes/', (req, res) => {
     })
   }
 
-  const note = {
+  const note = new Note({
     content: body.content,
     important: body.important || false,
     date: new Date(),
-    id: generateID()
-  }
+  })
 
   // add note to the server db
-  notes = notes.concat(note)
-
-  res.json(note)
+  note.save()
+    .then(newNote => {
+      res.json(newNote)
+    })
+    .catch(error => {
+      next(error)
+    })
 })
 
-app.delete('/api/notes/:id', (req, res) => {
-  const id = Number(req.params.id)
-  // pretend delete
-  notes.filter(note => note.id !== id)
+app.delete('/api/notes/:id', (req, res, error) => {
+  const id = req.params.id
+  Note.findByIdAndDelete(id)
+    .then(result => {
+      res.status(204).end()
+    })
+    .catch(error => {
+      next(error)
+    })
+})
 
-  res.status(204).end()
+app.put('/api/notes/:id', (req, res, next) => {
+  const id = req.params.id
+  const body = req.body
+
+  if (!body.content || !body.important) {
+    return res.status(400).send({
+      error: 'Missing content or importance!'
+    })
+  }
+
+  const note = {
+    content: body.content,
+    important: body.important
+  }
+
+  Note.findByIdAndUpdate(id, note, { new: true })
+    .then(updatedNote => {
+      if (!updatedNote) {
+        res.status(404).send(`ID: ${id} does not exist`)
+      } else {
+        res.json(updatedNote)
+      }
+    })
+    .catch(error => {
+      next(error)
+    })
 })
 
 const unknownEndpoint = (req, res) => {
@@ -98,6 +141,20 @@ const unknownEndpoint = (req, res) => {
 
 // if req didnt hit any of the endpoints then it will trigger "unknownEndpoint"
 app.use(unknownEndpoint)
+
+const errorHandler = (error, req, res, next) => {
+  console.log(error.message)
+
+  if (error.name === 'CastError') {
+    return res.status(404).send({
+      error: "Malformatted ID"
+    })
+  }
+
+  next(error)
+}
+
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {

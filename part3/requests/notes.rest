@@ -8,3 +8,15 @@ Content-Type: application/json
     "content": "Testing create notes POST request using VS REST extension",
     "important": true
 }
+
+###
+DELETE http://localhost:3001/api/notes/6109dbc125d171153b3c5320
+
+###
+PUT http://localhost:3001/api/notes/6108a44ad00da06ec044b353
+Content-Type: application/json
+
+{
+    "content": "This is the 4th and last note inserted (PART TWO)",
+    "important": true
+}
