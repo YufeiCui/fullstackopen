@@ -10,7 +10,6 @@ const App = () => {
   const [persons, setPersons] = useState([])
   const [notification, setNotification] = useState(null)
 
-
   const hook = () => {
     phonebookServices.getAll()
       .then(persons => {
@@ -62,9 +61,9 @@ const App = () => {
           isError: false
         })
       }).catch(error => {
-        console.log(error)
+        const errorObject = error.response.data
         setNotification({
-          message: `Cannot add ${duplicates.name}`,
+          message: errorObject.error,
           isError: true
         })
       })
@@ -74,7 +73,6 @@ const App = () => {
   const deletePhoneNumberOf = (seletedPerson) => {
     if (window.confirm(`Delete ${seletedPerson.name} ?`)) {
       phonebookServices.deletePhoneNumber(seletedPerson.id).then(_ => {
-        console.log("HELLO", _)
         setPersons(persons.filter(person => person.id !== seletedPerson.id))
         setNotification({
           message: `Deleted ${seletedPerson.name}`,

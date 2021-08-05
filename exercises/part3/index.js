@@ -156,7 +156,7 @@ app.post('/api/persons', (req, res, next) => {
 
 const unknownEndpoint = (req, res) => {
   res.status(404).send({
-    error: "unknown endpoint"
+    error: 'unknown endpoint'
   })
 }
 
@@ -171,6 +171,12 @@ const errorHandler = (error, req, res, next) => {
   if (error.name === 'CastError') {
     return res.status(400).send({
       error: 'Malformatted ID'
+    })
+  }
+
+  if (error.name === 'ValidationError') {
+    return res.status(400).send({
+      error: error.message
     })
   }
 
