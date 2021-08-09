@@ -1,0 +1,22 @@
+{
+  "name": "blog",
+  "version": "0.0.1",
+  "description": "A blog post exercise in part 4",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "test": "jest"
+  },
+  "author": "Yufei Cui",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.13.5"
+  },
+  "devDependencies": {
+    "jest": "^27.0.6",
+    "nodemon": "^2.0.12"
+  }
+}
