@@ -5,12 +5,12 @@
   "main": "index.js",
   "scripts": {
     "build:ui": "rm -rf build && cd ../part2/ && npm run build --prod && cp -r build ../part4 && cd ../part4/",
-    "start": "node index.js",
-    "dev": "nodemon index.js",
+    "start": "cross-env NODE_ENV=production node index.js",
+    "dev": "cross-env NODE_ENV=development nodemon index.js",
     "deploy": "git push heroku master",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",
     "logs:prod": "heroku logs --tail",
-    "test": "jest --verbose",
+    "test": "cross-env NODE_ENV=test jest",
     "lint": "eslint ."
   },
   "author": "Yufei Cui",
@@ -19,13 +19,16 @@
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "express-async-errors": "^3.1.1",
     "mongoose": "^5.13.5",
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "eslint": "^7.32.0",
     "eslint-plugin-react": "^7.24.0",
     "jest": "^27.0.6",
-    "nodemon": "^2.0.12"
+    "nodemon": "^2.0.12",
+    "supertest": "^6.1.4"
   }
 }
