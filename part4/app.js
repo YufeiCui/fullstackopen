@@ -1,5 +1,6 @@
 const config = require('./utils/config')
 const express = require('express')
+// handles async await errors that would otherwise be in try-catch blocks
 require('express-async-errors')
 const app = express()
 const cors = require('cors')

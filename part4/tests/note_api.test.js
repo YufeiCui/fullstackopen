@@ -3,25 +3,17 @@ const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
 const Note = require('../models/note')
-const initialNotes = [
-  {
-    content: 'HTML is easy',
-    date: new Date(),
-    important: false,
-  },
-  {
-    content: 'Browser can execute only Javascript',
-    date: new Date(),
-    important: true,
-  },
-]
+const helper = require('./test_helper')
+
+const initialNotes = helper.initialNotes
 
 beforeEach(async () => {
   await Note.deleteMany({})
-  let noteObject = new Note(initialNotes[0])
-  await noteObject.save()
-  noteObject = new Note(initialNotes[1])
-  await noteObject.save()
+
+  const noteObjects = initialNotes.map(note => new Note(note))
+  // creates a list of promises
+  const promiseArray = noteObjects.map(note => note.save())
+  await Promise.all(promiseArray)
 })
 
 test('notes are returned as json', async () => {
@@ -60,10 +52,10 @@ test('a valid note can be added', async () => {
     .expect(200)
     .expect('Content-Type', /application\/json/)
 
-  const response = await api.get('/api/notes')
-  const contents = response.body.map(r => r.content)
+  const notesAtEnd = await helper.notesInDb()
+  expect(notesAtEnd).toHaveLength(initialNotes.length + 1)
 
-  expect(contents).toHaveLength(initialNotes.length + 1)
+  const contents = notesAtEnd.map(note => note.content)
   expect(contents).toContain(newNote.content)
 })
 
@@ -77,9 +69,8 @@ test('note without content will not be added', async () => {
     .send(newNote)
     .expect(400)
 
-  const response = await api.get('/api/notes')
-
-  expect(response.body).toHaveLength(initialNotes.length)
+  const notesAtEnd = await helper.notesInDb()
+  expect(notesAtEnd).toHaveLength(initialNotes.length)
 })
 
 afterAll(() => {
