@@ -13,7 +13,7 @@ const noteSchema = new mongoose.Schema({
 })
 
 // modifiy what's returned by the 'toJSON' method of the schema
-noteSchema.set('toJSON ', {
+noteSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
     delete returnedObject._id

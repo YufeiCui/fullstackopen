@@ -11,7 +11,7 @@ notesRouter.get('/:id', async (req, res) => {
   const id = req.params.id
   const note = await Note.findById(id)
   if (!note) {
-    res.status(404).send('There is no note with the id', id)
+    return res.status(404).send(`There is no note with the id: ${id}`)
   } else {
     res.json(note)
   }
@@ -28,7 +28,7 @@ notesRouter.post('/', async (req, res) => {
 
   // add note to the server db
   const newNote = await note.save()
-  res.json(newNote)
+  res.status(201).json(newNote)
 })
 
 notesRouter.delete('/:id', async (req, res) => {

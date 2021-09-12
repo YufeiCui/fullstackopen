@@ -5,6 +5,9 @@ GET http://localhost:3001/api/notes
 GET http://localhost:3001/api/notez
 
 ###
+GET http://localhost:3001/api/notes/613d7a9872531843f6a56809
+
+###
 POST http://localhost:3001/api/notes
 Content-Type: application/json
 
