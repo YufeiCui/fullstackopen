@@ -17,3 +17,17 @@ Content-Type: application/json
   "title": "Do you smell what The Rock is cooking?",
   "author": "Yufei Cui"
 }
+
+###
+DELETE http://localhost:3003/api/blogs/615694335e491436e09bebff
+
+
+###
+PUT http://localhost:3003/api/blogs/610debdfe4f438a2e460461d
+Content-Type: application/json
+
+{
+  "title": "Do you smell what The Rock is cooking?",
+  "author": "Yufei Cui",
+  "likes": 0
+}

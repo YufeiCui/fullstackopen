@@ -36,7 +36,7 @@ notesRouter.delete('/:id', async (req, res) => {
   res.status(204).end()
 })
 
-notesRouter.put('/:id', async (req, res, next) => {
+notesRouter.put('/:id', async (req, res) => {
   const id = req.params.id
   const body = req.body
 

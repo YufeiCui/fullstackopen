@@ -30,6 +30,7 @@ describe('getting all blogs', () => {
   })
 
 })
+
 describe('posting a single blog', () => {
   test('blogs are uniquely identified by their "id" property', async () => {
     const blog = {
@@ -102,6 +103,76 @@ describe('posting a single blog', () => {
     })
 
     await Promise.all(blogPromises)
+  })
+})
+
+describe('deleting a single blog', () => {
+  test('no effect on invalid id', async () => {
+    const nonExistentId = await helper.getNonExistingId()
+    await api.delete(`/api/${nonExistentId}`)
+
+    const blogs = await helper.getAllBlogs()
+    expect(blogs).toHaveLength(initialBlogs.length)
+  })
+
+  test('properly removes with valid id', async () => {
+    const blogs = await helper.getAllBlogs()
+    const deleted = blogs[0]
+
+    await api
+      .delete(`/api/blogs/${deleted.id}`)
+      .expect(204)
+
+    const blogsAfterDeleted = await helper.getAllBlogs()
+    const ids = blogsAfterDeleted.map(blog => blog.id)
+    
+    expect(ids).toHaveLength(initialBlogs.length - 1)
+    expect(ids).not.toContain(deleted.id)
+  })
+})
+
+describe('updating a single blog', () => {
+  test('status 404 on invalid id', async () => {
+    const nonExistentId = await helper.getNonExistingId()
+
+    await api
+      .put(`/api/blogs/${nonExistentId}`)
+      .send(initialBlogs[0])
+      .expect(404)
+      
+    const blogs = await helper.getAllBlogs()
+    expect(blogs).toHaveLength(initialBlogs.length)
+  })
+
+  test('status 400 on invalid put body', async () => {
+    const blogs = await helper.getAllBlogs()
+    const first = blogs[0]
+    const titleOnlyBlog = {
+      title: 'title only blog with no author'
+    }
+
+    await api
+      .put(`/api/blogs/${first.id}`)
+      .send(titleOnlyBlog)
+      .expect(400)
+
+    const blogsAfter = await helper.getAllBlogs()
+    expect(blogsAfter).toHaveLength(initialBlogs.length)
+  })
+
+  test('properly updates with valid id', async () => {
+    const blogs = await helper.getAllBlogs()
+    const first = blogs[0]
+    const newFirst = {...first, likes: 1 + first.likes}
+
+    const updatedFirst = await api
+      .put(`/api/blogs/${first.id}`)
+      .send(newFirst)
+      .expect(200)
+
+    const blogsAfter = await helper.getAllBlogs()
+    const updatedBlog = blogsAfter.find(blog => blog.id === first.id)
+    expect(updatedBlog.likes).toBe(first.likes + 1)
   })
 })
 
