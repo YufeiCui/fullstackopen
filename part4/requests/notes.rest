@@ -5,7 +5,7 @@ GET http://localhost:3001/api/notes
 GET http://localhost:3001/api/notez
 
 ###
-GET http://localhost:3001/api/notes/613d7a9872531843f6a56809
+GET http://localhost:3001/api/notes/615bcc4d93b427fbc09a6c23
 
 ###
 POST http://localhost:3001/api/notes
@@ -13,7 +13,8 @@ Content-Type: application/json
 
 {
     "content": "Testing create notes POST request using VS REST extension",
-    "important": true
+    "important": true,
+    "user": "615bcc4d93b427fbc09a6c23"
 }
 
 ###
