@@ -9,3 +9,12 @@ Content-Type: application/json
     "username": "feigei",
     "password": "MySuperSecretPassword123!"
 }
+
+###
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+    "username": "linda",
+    "password": "LindasSuperSecretPasswordWOW321!"
+}

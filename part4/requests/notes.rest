@@ -10,6 +10,7 @@ GET http://localhost:3001/api/notes/615bcc4d93b427fbc09a6c23
 ###
 POST http://localhost:3001/api/notes
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZlaWdlaSIsImlkIjoiNjE1YmNjNGQ5M2I0MjdmYmMwOWE2YzIzIiwiaWF0IjoxNjM1MDE1ODM3LCJleHAiOjE2MzUwMjY2Mzd9.yZguqpUK9N6Tu0jNS2UunqhFx3y5uMGig1TJE7dtj0Q
 
 {
     "content": "Testing create notes POST request using VS REST extension",
