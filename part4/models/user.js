@@ -20,6 +20,6 @@ userSchema.set('toJSON', {
 
 userSchema.plugin(uniqueValidator)
 
-const User = mongoose.model('User', userSchema)
+const User = mongoose.model('noteUser', userSchema)
 
 module.exports = User

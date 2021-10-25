@@ -33,10 +33,10 @@ notesRouter.post('/', async (req, res) => {
   const body = req.body
 
   // find the user who wish to post the note
-  const user = await User.findById(body.user)
+  const user = await User.findById(decodedToken.id)
 
   if (!user) {
-    return res.status(404).send(`There is no user with the id: ${body.user}`)
+    return res.status(404).send(`There is no user with the id: ${decodedToken.id}`)
   }
 
   const note = new Note({

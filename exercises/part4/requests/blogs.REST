@@ -12,10 +12,12 @@ Content-Type: application/json
 ###
 POST http://localhost:3003/api/blogs/
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1aXl1ZmVpIiwiaWQiOiI2MTc0NmU1Mjc2Y2IyMzNmZThlY2FjZTgiLCJpYXQiOjE2MzUwMjIwMjAsImV4cCI6MTYzNTAzMjgyMH0.A89onNx7c412ZTw_44EJU_TlYFBd2pxchpeExS4z88Q
 
 {
   "title": "Do you smell what The Rock is cooking?",
-  "author": "Yufei Cui"
+  "author": "Yufei Cui",
+  "user": "61746e5276cb233fe8ecace8"
 }
 
 ###
