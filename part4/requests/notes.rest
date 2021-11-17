@@ -31,10 +31,10 @@ Content-Type: application/json
 DELETE http://localhost:3001/api/notes/6109dbc125d171153b3c5320
 
 ###
-PUT http://localhost:3001/api/notes/6108a44ad00da06ec044b353
+PUT http://localhost:3001/api/notes/61948c02b732f59b4d566a95
 Content-Type: application/json
 
 {
     "content": "This is the 4th and last note inserted (PART TWO)",
-    "important": true
+    "important": false
 }

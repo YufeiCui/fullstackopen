@@ -30,7 +30,7 @@ loginRouter.post('/', async (req, res) => {
     { expiresIn: 60 * 60 * 3 } // 3 hours 
   )
 
-  res.status(200).send({ token, username: user.username, name: user.name})
+  res.status(200).send({ token, username: user.username, name: user.name, id: user._id })
 })
 
 module.exports = loginRouter

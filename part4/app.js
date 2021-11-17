@@ -40,7 +40,7 @@ app.use(express.json())
 
 app.use(middleware.requestLogger)
 
-app.use('/api/notes', notesRouter)
+app.use('/api/notes', middleware.tokenExtractor, middleware.userExtractor, notesRouter)  // order matters here too, extractors BEFORE the main route
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
 

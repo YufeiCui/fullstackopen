@@ -1,13 +1,12 @@
 const express = require('express')
 const notesRouter = express.Router()
-const jwt = require('jsonwebtoken')
 const Note = require('../models/note')
 const User = require('../models/user')
 
 notesRouter.get('/', async (req, res) => {
   const notes = await Note
     .find({})
-    .populate('user', { username: 1, name: 1 })
+    .populate('noteUser', { username: 1, name: 1 })
   res.json(notes)
 })
 
@@ -22,18 +21,23 @@ notesRouter.get('/:id', async (req, res) => {
 })
 
 notesRouter.post('/', async (req, res) => {
-  const token = getTokenFrom(req)
-  const decodedToken = jwt.verify(token, process.env.SECRET)
-  if (!token || !decodedToken.id) {
-    return res.status(401).json({
-      error: 'token missing or invalid'
+  if (!req.token) {
+    return res.status(401).send({
+      error: 'Token missing or invalid'
     })
   }
-  
+
+  if (!req.user) {
+    return res.status(401).send({
+      error: 'User id missing'
+    })
+  }
+
   const body = req.body
+  const userId = req.user 
 
   // find the user who wish to post the note
-  const user = await User.findById(decodedToken.id)
+  const user = await User.findById(userId)
 
   if (!user) {
     return res.status(404).send(`There is no user with the id: ${decodedToken.id}`)
@@ -63,10 +67,22 @@ notesRouter.delete('/:id', async (req, res) => {
 })
 
 notesRouter.put('/:id', async (req, res) => {
+  if (!req.token) {
+    return res.status(401).send({
+      error: 'Token missing or invalid'
+    })
+  }
+
+  if (!req.user) {
+    return res.status(401).send({
+      error: 'User id missing'
+    })
+  }
+
   const id = req.params.id
   const body = req.body
 
-  if (!body.content || !body.important) {
+  if (body == null || body.content == null || body.important == null) {
     return res.status(400).send({
       error: 'Missing content or importance!'
     })
