@@ -12,7 +12,7 @@ loginRouter.post('/', async (req, res) => {
   let user;
   if (hasLoginInfo) {
     user = await User.findOne({ username: body.username })
-    canLogIn = hasLoginInfo && await bcrypt.compare(body.password, user.passwordHash)
+    canLogIn = hasLoginInfo && user && await bcrypt.compare(body.password, user.passwordHash)
   }
 
   if (!canLogIn) {
@@ -29,7 +29,7 @@ loginRouter.post('/', async (req, res) => {
     { expiresIn: 60 * 60 * 3 }
   )
 
-  res.status(200).json({ token, username: user.username, id: user._id })
+  res.status(200).json({ token, username: user.username, name: user.name, id: user._id })
 })
 
 module.exports = loginRouter
