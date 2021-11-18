@@ -47,14 +47,31 @@ const App = () => {
     setNotification(notification)
   }
   
+  // use effect to retrieve user information from localstorage
+  useEffect(() => {
+    const noteAppUserJSON = window.localStorage.getItem('loggedNoteAppUser')
+    if (noteAppUserJSON) {
+      const user = JSON.parse(noteAppUserJSON)
+      setUserInfo(user)
+    }
+  }, [])
+
+  const setUserInfo = (user) => {
+    setUser(user)
+    noteService.setToken(user.token)
+  }
+
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
       const user = await loginService.login({
         username, password
       })
-      setUser(user)
-      noteService.setToken(user.token)
+
+      window.localStorage.setItem(
+        'loggedNoteAppUser', JSON.stringify(user)
+      )
+      setUserInfo(user)
       setUsername('')
       setPassword('')
       setSuccessNotification(`${user.username} has successfully signed in!`)
@@ -63,6 +80,15 @@ const App = () => {
       console.log(exception)
       setFailureNotification(`Sign in failed: ${exception}`)
     }
+  }
+
+  const handleLogout = async (event) => {
+    event.preventDefault()
+    window.localStorage.removeItem('loggedNoteAppUser')
+    setUser(null)
+    setUsername('')
+    setPassword('')
+    setSuccessNotification('User successfully logged out!')
   }
 
   const createNote = (content) => {
@@ -108,31 +134,30 @@ const App = () => {
       return false
     }
 
-    console.log(user)
-    console.log(note)
-
     return note.user === user.id
   }
 
   const toggleImportanceOf = async (id) => {
-    const note = notes.find(n => n.id === id)
-    if (note === undefined) {
+    const oldNote = notes.find(n => n.id === id)
+    if (oldNote === undefined) {
       setFailureNotification('Could not update note!')
       return
     }
 
-    if (!noteBelongsToUser(note)) {
-      setFailureNotification('Cannot edit notes that belong to others!')
+    if (!noteBelongsToUser(oldNote)) {
+      setFailureNotification('Cannot edit notes that belongs to others!')
       return
     }
 
     // update note
-    const changedNote = {...note, important: !note.important}
+    const changedNote = {...oldNote, important: !oldNote.important}
     try {
+      // improve performance by preemptively changing the UI 
+      setNotes(notes.map(note => note.id === id ? changedNote : note))
       const newNote = await noteService.update(id, changedNote)
-      setNotes(notes.map(note => note.id === id ? newNote : note))
       setSuccessNotification('Note updated successfully!')
     } catch (exception) {
+      setNotes(notes.map(note => note.id === id ? oldNote : note))
       console.log(exception)
       setFailureNotification(`Failed to update note: ${exception}`)
     }
@@ -170,6 +195,9 @@ const App = () => {
       <>
         <div>
           <p>{user.username} logged-in</p>
+          <button onClick={handleLogout}>
+            logout
+          </button>
         </div>
         <form onSubmit={addNote}>
           <input
