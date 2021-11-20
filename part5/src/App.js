@@ -9,13 +9,9 @@ import Togglable from './components/Togglable'
 
 const App = () => {
   const [notes, setNotes] = useState([])
-  const [newNote, setNewNote] = useState('a new note...')
   const [showAll, setShowAll] = useState(true)
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [notification, setNotification] = useState(null)
-  const [loginVisible, setLoginVisible] = useState(false)
 
   const hook = () => {
     // console.log('effect')
@@ -65,19 +61,14 @@ const App = () => {
     noteService.setToken(user.token)
   }
 
-  const handleLogin = async (event) => {
-    event.preventDefault()
+  const handleLogin = async (credentials) => {
     try {
-      const user = await loginService.login({
-        username, password
-      })
+      const user = await loginService.login(credentials)
 
       window.localStorage.setItem(
         'loggedNoteAppUser', JSON.stringify(user)
       )
       setUserInfo(user)
-      setUsername('')
-      setPassword('')
       setSuccessNotification(`${user.username} has successfully signed in!`)
     } catch (exception) {
       // error message 
@@ -90,39 +81,21 @@ const App = () => {
     event.preventDefault()
     window.localStorage.removeItem('loggedNoteAppUser')
     setUser(null)
-    setUsername('')
-    setPassword('')
     setSuccessNotification('User successfully logged out!')
   }
 
-  const createNote = (content) => {
-    return {
-      content: content,
-      date: new Date().toISOString(),
-      important: Math.random() < 0.5
-    }
-  }
-
-  const addNote = async (event) => {
-    event.preventDefault()
-    const note = createNote(newNote)
+  const addNote = async (note) => {
     try {
       // add newNote to the server    
       const newNote = await noteService.create(note)
       // add newNote into the array of notes if post was successful
       setNotes(notes.concat(newNote))
-      // make the newNote variable empty so the user can type again
-      setNewNote('')
       setSuccessNotification('Note added successfully!')
     } catch (exception) {
       // error message 
       console.log(exception)
       setFailureNotification(`Failed to add new note: ${exception}`)
     }
-  }
-
-  const handleNoteChange = (event) => {
-    setNewNote(event.target.value)
   }
 
   const notesToShow = () => {
@@ -177,11 +150,7 @@ const App = () => {
           </button>
         </div>
         <Togglable buttonLabel="new note">
-          <NoteForm 
-            onSubmit={addNote}
-            note={newNote}
-            handleNoteChange={handleNoteChange}
-          />
+          <NoteForm createNote={addNote}/>
         </Togglable>
       </>
     )
@@ -190,13 +159,7 @@ const App = () => {
   const loginForm = () => {
     return (
       <Togglable buttonLabel="Login">
-        <LoginForm 
-          handleSubmit={handleLogin} 
-          handleUsernameChange={(event) => setUsername(event.target.value)}
-          handlePasswordChange={(event) => setPassword(event.target.value)}
-          username={username}
-          password={password}
-        />
+        <LoginForm handleLogin={handleLogin} />
       </Togglable>
     )
   }
