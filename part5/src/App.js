@@ -3,15 +3,19 @@ import Note from './components/Note'
 import Notification from './components/Notification'
 import noteService from './services/notes'
 import loginService from './services/login'
+import LoginForm from './components/LoginForm'
+import NoteForm from './components/NoteForm'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [notes, setNotes] = useState([])
-  const [newNote, setNewNote] = useState("a new note...")
+  const [newNote, setNewNote] = useState('a new note...')
   const [showAll, setShowAll] = useState(true)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [notification, setNotification] = useState(null)
+  const [loginVisible, setLoginVisible] = useState(false)
 
   const hook = () => {
     // console.log('effect')
@@ -154,40 +158,13 @@ const App = () => {
     try {
       // improve performance by preemptively changing the UI 
       setNotes(notes.map(note => note.id === id ? changedNote : note))
-      const newNote = await noteService.update(id, changedNote)
+      await noteService.update(id, changedNote)
       setSuccessNotification('Note updated successfully!')
     } catch (exception) {
       setNotes(notes.map(note => note.id === id ? oldNote : note))
       console.log(exception)
       setFailureNotification(`Failed to update note: ${exception}`)
     }
-  }
-  
-
-  const loginForm = () => {
-    return (
-      <form onSubmit={handleLogin}>
-        <div>
-          username 
-          <input
-            type="text"
-            value={username}
-            name="Username"
-            onChange={({ target }) => setUsername(target.value)}
-          />
-        </div>
-        <div>
-          password 
-          <input
-            type="text"
-            value={password}
-            name="Password"
-            onChange={({ target }) => setPassword(target.value)}
-          />
-        </div>
-        <button type="submit">login</button>
-      </form>
-    )
   }
   
   const noteForm = () => {
@@ -199,14 +176,28 @@ const App = () => {
             logout
           </button>
         </div>
-        <form onSubmit={addNote}>
-          <input
-            value={newNote}
-            onChange={handleNoteChange}
+        <Togglable buttonLabel="new note">
+          <NoteForm 
+            onSubmit={addNote}
+            note={newNote}
+            handleNoteChange={handleNoteChange}
           />
-          <button type="submit">save</button>
-        </form>
+        </Togglable>
       </>
+    )
+  }
+
+  const loginForm = () => {
+    return (
+      <Togglable buttonLabel="Login">
+        <LoginForm 
+          handleSubmit={handleLogin} 
+          handleUsernameChange={(event) => setUsername(event.target.value)}
+          handlePasswordChange={(event) => setPassword(event.target.value)}
+          username={username}
+          password={password}
+        />
+      </Togglable>
     )
   }
 
@@ -215,7 +206,7 @@ const App = () => {
       <h1>Notes</h1>
       <Notification notification={notification}/>
       
-      {user === null ? loginForm() : noteForm()}
+      { user === null ? loginForm() : noteForm() }
 
       <button onClick={handleShowAllToggle}>
         show {showAll ? "important" : "all"}
