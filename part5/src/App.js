@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Note from './components/Note'
 import Notification from './components/Notification'
 import noteService from './services/notes'
@@ -12,6 +12,7 @@ const App = () => {
   const [showAll, setShowAll] = useState(true)
   const [user, setUser] = useState(null)
   const [notification, setNotification] = useState(null)
+  const noteFormRef = useRef()
 
   const hook = () => {
     // console.log('effect')
@@ -90,6 +91,7 @@ const App = () => {
       const newNote = await noteService.create(note)
       // add newNote into the array of notes if post was successful
       setNotes(notes.concat(newNote))
+      noteFormRef.current.toggleVisibility()
       setSuccessNotification('Note added successfully!')
     } catch (exception) {
       // error message 
@@ -149,7 +151,7 @@ const App = () => {
             logout
           </button>
         </div>
-        <Togglable buttonLabel="new note">
+        <Togglable buttonLabel="new note" ref={noteFormRef}>
           <NoteForm createNote={addNote}/>
         </Togglable>
       </>
