@@ -5,18 +5,6 @@ const User = require('./../models/user')
 const jwt = require('jsonwebtoken')
 
 blogsRouter.get('/', async (req, res) => {
-  if (!req.token) {
-    return res.status(401).send({
-      error: 'Token missing or invalid'
-    })
-  }
-
-  if (!req.user) {
-    return res.status(401).send({
-      error: 'User id missing'
-    })
-  }
-
   const blogs = await Blog.find({})
   res.json(blogs)
 })
