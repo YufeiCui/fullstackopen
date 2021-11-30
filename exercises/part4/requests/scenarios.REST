@@ -23,11 +23,22 @@ Content-Type: application/json
 ### Post a new blog signed in 
 POST http://localhost:3003/api/blogs/
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1aXl1ZmVpIiwiaWQiOiI2MTk1ZmI2M2UyMzgwYWQxNzg5YzJmZTEiLCJpYXQiOjE2MzcyMTkyMTYsImV4cCI6MTYzNzIzMDAxNn0.pZkRoBhKSD_Tx8nm8Uy31FjH0Q2b8LaL0FAlmIYxalI
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1aXl1ZmVpIiwiaWQiOiI2MTk1ZmI2M2UyMzgwYWQxNzg5YzJmZTEiLCJpYXQiOjE2MzgyNTMwMzcsImV4cCI6MTYzODI2MzgzN30.eCuNBLCQdkndsmQ_Syt6ATo3lIGFvgeEOmk9udbst5g
 
 {
   "title": "Today was an awfully interesting day as electricity went out for more than 5 hours!",
   "author": "Yufei Cui"
+}
+
+### Set the likes of a blog post 
+PUT http://localhost:3003/api/blogs/61a5c1fd961cc1c83845292e
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImN1aXl1ZmVpIiwiaWQiOiI2MTk1ZmI2M2UyMzgwYWQxNzg5YzJmZTEiLCJpYXQiOjE2MzgyNTMwMzcsImV4cCI6MTYzODI2MzgzN30.eCuNBLCQdkndsmQ_Syt6ATo3lIGFvgeEOmk9udbst5g
+
+{
+  "title": "Today was an awfully interesting day as electricity went out for more than 5 hours!",
+  "author": "Yufei Cui",
+  "likes": 1000
 }
 
 ### Deleting a blog without signing in 

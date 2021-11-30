@@ -32,8 +32,9 @@ blogsRouter.post('/', async (req, res) => {
   const blog = new Blog({
     title: body.title,
     author: body.author,
-    likes: body.likes || 0,
     user: user._id, // save the user who owns the blog
+    likes: body.likes || 0,
+    url: body.url
   })
   const newBlog = await blog.save()
 
@@ -83,7 +84,8 @@ blogsRouter.put('/:id', async (req, res) => {
   const blog = {
     author: body.author,
     title: body.title,
-    likes: body.likes || 0
+    likes: body.likes || 0,
+    url: body.url || ''
   }
 
   const updatedBlog = await Blog.findByIdAndUpdate(id, blog ,{ new: true })

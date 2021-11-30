@@ -31,12 +31,24 @@ const create = async (blog) => {
   return newBlog
 }
 
+const update = async (blog) => {
+  let updatedBlog = null
+  try {
+    const result = await axios.put(`${baseUrl}/${blog.id}`, blog, getHttpConfig())
+    updatedBlog = result.data
+  } catch (exception) {
+    console.log(exception)
+  }
+
+  return updatedBlog
+}
+
 const setToken = (newToken) => {
   token = `bearer ${newToken}`
 }
 
 const blogService = {
-  getAll, create, setToken
+  getAll, create, update, setToken
 }
 
 export default blogService

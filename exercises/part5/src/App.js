@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
-import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
+import BlogList from './components/BlogList'
 import LoginForm from './components/LoginForm'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
@@ -16,7 +16,8 @@ const App = () => {
     blogService.getAll().then(blogs => {
       setBlogs( blogs )
     })
-  }, [user])
+  }, [])
+
 
   useEffect(() => {
     const blogUserJSON = window.localStorage.getItem(userStorageKey)
@@ -25,7 +26,6 @@ const App = () => {
     }
   }, [])
 
-  
   const addBlogPost = async (blog) => {
     try {
       const newBlog = await blogService.create(blog)
@@ -57,25 +57,33 @@ const App = () => {
     blogService.setToken(user.token)
   }
 
+  const incrementLike = async (blog) => {
+    try {
+      const blogAfterIncrement = {...blog, likes: blog.likes + 1}
+      const updatedBlog = await blogService.update(blogAfterIncrement)
+      setBlogs(blogs.map(blog => blog.id === updatedBlog.id ? updatedBlog : blog))
+    } catch (exception) {
+      console.log(exception)
+    }
+  }
+
   const loginForm = () => {
     return (
      <LoginForm handleLogin={handleLogin}/>
     )
   }
 
+  const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
+
   const blogsUI = () => {
     return (
       <div>
         <h2>blogs</h2>
-        <p>{user.name} logged in</p>
+        {user.name} logged in
         <button onClick={handleLogout}>logout</button>
-        <ul>
-          {blogs.map(blog =>
-              <li key={blog.id}><Blog blog={blog}/></li>
-          )}
-        </ul>
+        <BlogList blogs={sortedBlogs} incrementLike={incrementLike}/>
         <Togglable buttonLabel="Add a new Blog post" ref={blogFormRef}>
-          <BlogForm addBlogPost={addBlogPost}/>
+          <BlogForm addBlogPost={addBlogPost} incrementLike={incrementLike}/>
         </Togglable>
       </div>
     )
