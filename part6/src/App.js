@@ -1,25 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import NewNote from "./components/NewNote";
+import Notes from "./components/Notes";
 
-function App() {
+const App = () => {
+  /**
+   * Note: cannot initialize data here whilst having the store being passed to the app
+   * This will cause an infinite loop:
+   * add note (in App) -> store update -> add note (in App) -> store update -> ...
+   */
+  // dispatch({
+  //   type: 'NEW_NOTE',
+  //   data: {
+  //     content: 'the app state is in redux store',
+  //     important: true,
+  //     id: 1
+  //   }
+  // })
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <NewNote />
+      <Notes />
     </div>
-  );
+  )
 }
 
 export default App;
