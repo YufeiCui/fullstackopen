@@ -1,5 +1,6 @@
 import NewNote from "./components/NewNote";
 import Notes from "./components/Notes";
+import NotesFilter from "./components/NotesFilter";
 
 const App = () => {
   /**
@@ -19,6 +20,7 @@ const App = () => {
   return (
     <div>
       <NewNote />
+      <NotesFilter/>
       <Notes />
     </div>
   )

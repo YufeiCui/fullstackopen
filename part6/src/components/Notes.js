@@ -1,11 +1,12 @@
 import { useDispatch, useSelector } from "react-redux"
+import Filter from "../filterTypes"
 import { toggleImportanceOf } from "../reducer/noteReducer"
 
 const Notes = () => {
   // hook for dispatching to the store in the Provider
   const dispatch = useDispatch()
   // hook for extracting info from the store
-  const notes = useSelector(state => state)
+  const notes = useSelector(state => filterNotesBy(state.notes, state.filter))
 
   const toggleImportance = (id) => {
     dispatch(toggleImportanceOf(id))
@@ -31,6 +32,19 @@ const Note = ({ note, handleClick }) => {
       {note.content} <strong>{note.important ? 'important' : ''}</strong>
     </li>
   )
+}
+
+const filterNotesBy = (notes, filter) => {
+  switch (filter) {
+    case Filter.ALL:
+      return notes
+    case Filter.IMPORTANT:
+      return notes.filter(note => note.important)
+    case Filter.NONIMPORTANT:
+      return notes.filter(note => !note.important)
+    default:
+      return notes
+  }
 }
 
 export default Notes
